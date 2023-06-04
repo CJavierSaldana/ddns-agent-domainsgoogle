@@ -3,5 +3,14 @@
 {
 	"name": "Rust",
 	"image": "mcr.microsoft.com/devcontainers/rust:0-1-bullseye",
-	"runArgs": ["--env-file", "${localWorkspaceFolder}/.devcontainer/.env"]
+	"runArgs": ["--env-file", "${localWorkspaceFolder}/.devcontainer/.env"],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"GitHub.copilot"
+			]
+		}
+	}
+
+	
 }

@@ -4,40 +4,29 @@ use std::io;
 async fn main() -> io::Result<()> {
     println!("Starting DDNS updater");
 
-    // get the env variables DDNS_USER
-    let ddns_user = std::env::var("DDNS_USER").unwrap_or_default();
+    let ddns_user = std::env::var("DDNS_USER").expect("DDNS_USER is not set");
+    let ddns_pass = std::env::var("DDNS_PASS").expect("DDNS_PASS is not set");
+    let ddns_host = std::env::var("DDNS_HOST").expect("DDNS_HOST is not set");
 
-    // get the env variables DDNS_PASS
-    let ddns_pass = std::env::var("DDNS_PASS").unwrap_or_default();
+    println!("ENVs loaded");
 
-    // get the env variables DDNS_HOST
-    let ddns_host = std::env::var("DDNS_HOST").unwrap_or_default();
+    let public_ip = match get_public_ip().await {
+        Ok(ip) => ip,
+        Err(e) => {
+            eprintln!("Error getting public IP: {}", e);
+            return Ok(());
+        }
+    };
 
-    // validate the env variables
-    if ddns_user == "" || ddns_pass == "" {
-        println!("DDNS_USER or DDNS_PASS is not set");
-        return Ok(());
-    }
-
-    // validate the env variables
-    if ddns_host == "" {
-        println!("DDNS_HOST is not set");
-        return Ok(());
-    }
-
-    // print ok message
-    println!("DDNS_USER and DDNS_PASS are set");
-
-    // get public ip and set it to a variable
-    let public_ip = get_public_ip().await.unwrap();
-
-    // print the public ip
     println!("Public IP: {}", public_ip);
 
-    // set the ip to the ddns
-    let ddnsresult = set_ip_ddns(public_ip, ddns_host, ddns_user, ddns_pass)
-        .await
-        .unwrap();
+    let ddnsresult = match set_ip_ddns(public_ip, ddns_host, ddns_user, ddns_pass).await {
+        Ok(result) => result,
+        Err(e) => {
+            eprintln!("Error updating DDNS: {}", e);
+            return Ok(());
+        }
+    };
 
     // print the ddns result
     println!("DDNS Result: {}", ddnsresult);
@@ -66,16 +55,13 @@ async fn set_ip_ddns(
 
     let mut headers = reqwest::header::HeaderMap::new();
 
-    // calculate the base64 auth
     let auth = format!("{}:{}", user, pass);
 
-    // insert the auth header
     headers.insert(
         "Authorization",
         format!("Basic {}", base64::encode(auth)).parse()?,
     );
 
-    // compose the url
     let url = format!(
         "https://domains.google.com/nic/update?hostname={}&myip={}",
         host, ip
