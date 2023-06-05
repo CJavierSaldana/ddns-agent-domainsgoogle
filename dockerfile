@@ -1,20 +1,20 @@
-# Start from a Rust base image
-FROM rust:1.57 as build
+FROM rust:1.69 as build
 
-# Create a new directory for the application
 WORKDIR /build
 
-# Copy all local files into the container
-COPY . .
+COPY Cargo.* ./
+COPY src ./src
 
-# Build the application for release with musl target
 RUN cargo build --release --target-dir /publish
 
-# Start a new stage from scratch
-FROM scratch
+FROM debian:bullseye-slim
 
-# Copy over the binary from the build stage
-COPY --from=build /publish /ddns-agent-domainsgoogle
+RUN apt-get update && \
+    apt-get install -y openssl ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
-# Set the startup command to run the binary
-CMD ["/ddns-agent-domainsgoogle"]
+COPY --from=build /publish/release/ddns-agent-domainsgoogle /ddns-agent-domainsgoogle
+
+RUN chmod +x /ddns-agent-domainsgoogle
+
+ENTRYPOINT ["/ddns-agent-domainsgoogle"]

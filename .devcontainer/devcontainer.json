@@ -4,6 +4,11 @@
 	"name": "Rust",
 	"image": "mcr.microsoft.com/devcontainers/rust:0-1-bullseye",
 	"runArgs": ["--env-file", "${localWorkspaceFolder}/.devcontainer/.env"],
+
+    "features": {
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+	},
+
 	"customizations": {
 		"vscode": {
 			"extensions": [
