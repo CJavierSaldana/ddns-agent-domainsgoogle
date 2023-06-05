@@ -6,7 +6,7 @@ on:
       - "main"
 
 env:
-  REGISTRY_IMAGE: ghcr.io/CJavierSaldana/ddns-agent-domainsgoogle
+  REGISTRY_IMAGE: ghcr.io/cjaviersaldana/ddns-agent-domainsgoogle
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
       matrix:
         platform:
           - linux/amd64
-          - linux/arm64
+          # - linux/arm64
     steps:
       -
         name: Checkout
