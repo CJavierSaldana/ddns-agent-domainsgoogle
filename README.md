@@ -33,7 +33,7 @@ To get started, follow these steps:
 3. Provide your Google Domains Dynamic DNS username, password, and host when running the Docker container:
 
 ```bash
-docker run -e DDNS_USER=<your-ddns-user> -e DDNS_PASS=<your-ddns-password> -e DDNS_HOST=<your-ddns-host> ddns-agent-domainsgoogle
+docker run -e DDNS_USER=<your-ddns-user> -e DDNS_PASS=<your-ddns-password> -e DDNS_HOST=<your-ddns-host> ghcr.io/cjaviersaldana/ddns-agent-domainsgoogle
 ```
 
 ## Features
